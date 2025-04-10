@@ -1,0 +1,36 @@
+.movie-card {
+  width: 240px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease-in-out;
+  color: #fff;
+  margin: 20px;
+}
+
+.movie-card:hover {
+  box-shadow: 0 10px 30px rgba(241, 53, 109, 0.4);
+}
+
+.movie-image {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+}
+
+.movie-info {
+  padding: 16px;
+  text-align: center;
+}
+
+.movie-info h3 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.genre {
+  font-size: 0.9rem;
+  color: #ccc;
+}

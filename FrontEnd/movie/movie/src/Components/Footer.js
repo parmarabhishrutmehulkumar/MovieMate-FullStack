@@ -1,0 +1,49 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import "./Footer.css";
+
+const Footer = () => {
+  return (
+    <motion.footer
+      className="footer"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <div className="footer-container">
+        <div className="footer-section brand">
+          <motion.h3 whileHover={{ scale: 1.05 }}>MovieMate</motion.h3>
+          <p>Discover movies tailored to your taste.</p>
+        </div>
+
+        <div className="footer-section links">
+          <h4>Explore</h4>
+          <ul>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/faq">FAQ</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+          </ul>
+        </div>
+
+        <div className="footer-section socials">
+          <h4>Connect</h4>
+          <div className="social-icons">
+            <a href="#"><FaFacebookF /></a>
+            <a href="#"><FaTwitter /></a>
+            <a href="#"><FaInstagram /></a>
+            <a href="#"><FaLinkedinIn /></a>
+          </div>
+        </div>
+      </div>
+
+      <div className="footer-bottom">
+        <p>&copy; {new Date().getFullYear()} MovieMate | All rights reserved.</p>
+      </div>
+    </motion.footer>
+  );
+};
+
+export default Footer;
