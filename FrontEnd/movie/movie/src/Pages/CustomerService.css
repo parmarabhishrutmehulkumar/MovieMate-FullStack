@@ -1,0 +1,56 @@
+.customer-service-page {
+  font-family: 'Arial', sans-serif;
+  color: #fff;
+  background-color: #141414;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.service-hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.service-hero h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  color: #e50914;
+}
+
+.service-hero p {
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.service-section {
+  margin-bottom: 30px;
+}
+
+.service-section h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #e50914;
+}
+
+.faq {
+  margin-bottom: 20px;
+}
+
+.faq h3 {
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.faq p {
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.service-section a {
+  color: #e50914;
+  text-decoration: none;
+}
+
+.service-section a:hover {
+  text-decoration: underline;
+}

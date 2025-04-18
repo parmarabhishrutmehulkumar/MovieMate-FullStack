@@ -1,201 +1,236 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import "./Home.css";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
-import "../Components/Mlist.css";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import "./Home.css";
+import Modal from "react-modal";
 
-
-// Trending movies mock array
-const mockTrending = [
-  "Inception",
-  "The Dark Knight",
-  "Interstellar",
-  "Avatar",
-  "Joker",
-  "Parasite",
-];
-
-function Home() {
-  const [movieName, setMovieName] = useState("");
+const Home = () => {
   const [recommendations, setRecommendations] = useState([]);
-  const [error, setError] = useState("");
   const [trendingMovies, setTrendingMovies] = useState([]);
-  const apiKey = "d147107f102b8d03e41507c2503fa69e"; // Replace with your TMDB API Key
-  
+  const [englishMovies, setEnglishMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [movieDetails, setMovieDetails] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
+  const [error, setError] = useState(""); // State for error messages
 
-  // Fetch trending movie posters when the component mounts
+  const apiKey = "d147107f102b8d03e41507c2503fa69e";
+
   useEffect(() => {
-    const fetchTrendingMovies = async () => {
-      const moviePromises = mockTrending.map((movie) =>
-        fetch(
-          `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(movie)}`
-        )
-          .then((response) => response.json())
-          .then((data) => data.results[0]) // Get the first result
-      );
-
-      try {
-        const movieResults = await Promise.all(moviePromises);
-        setTrendingMovies(movieResults);
-      } catch (error) {
-        console.error("Error fetching trending movies:", error);
-        setError("Failed to fetch trending movies.");
-      }
-    };
-
     fetchTrendingMovies();
+    fetchEnglishMovies();
   }, []);
 
-  const handleRecommendClick = async () => {
-    if (!movieName) {
-      alert("Please enter a movie name");
+  const fetchRecommendations = async () => {
+    if (!searchQuery.trim()) {
+      setError("Please enter a movie name to get recommendations.");
       return;
     }
 
     try {
       const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movieName}`
+        `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(
+          searchQuery
+        )}`
       );
       const data = await response.json();
 
       if (data.results && data.results.length > 0) {
-        const movieRecommendations = data.results.slice(0, 5);
-        setRecommendations(movieRecommendations);
+        setRecommendations(data.results.slice(0, 10)); // Show top 10 recommendations
         setError("");
       } else {
-        setError("No recommendations found.");
+        setError("No recommendations found for the entered movie.");
         setRecommendations([]);
       }
     } catch (error) {
       console.error("Error fetching recommendations:", error);
-      setError("Failed to fetch data. Please try again.");
+      setError("Failed to fetch recommendations. Please try again.");
     }
   };
 
+  const fetchTrendingMovies = async () => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`
+      );
+      const data = await response.json();
+      setTrendingMovies(data.results || []);
+    } catch (error) {
+      console.error("Error fetching trending movies:", error);
+    }
+  };
+
+  const fetchEnglishMovies = async () => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&with_original_language=en`
+      );
+      const data = await response.json();
+      setEnglishMovies(data.results || []);
+    } catch (error) {
+      console.error("Error fetching English movies:", error);
+    }
+  };
+
+  const handleMovieClick = async (movie) => {
+    try {
+      const movieId = movie.id;
+
+      const [detailsRes, creditsRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`),
+        fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}&language=en-US`),
+      ]);
+
+      const detailsData = await detailsRes.json();
+      const creditsData = await creditsRes.json();
+
+      setMovieDetails({
+        ...detailsData,
+        cast: creditsData.cast.slice(0, 5),
+        crew: creditsData.crew.filter(
+          (member) => member.job === "Director" || member.job === "Writer"
+        ),
+      });
+
+      setSelectedMovie(movie);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching movie details:", error);
+    }
+  };
+
+  Modal.setAppElement("#root");
+
   return (
-    <div
-      className="home-page"
-      style={{
-        backgroundImage:
-          "url('https://media.istockphoto.com/id/458105777/photo/many-dvds-are-arranged-side-by-side-on-the-floor.jpg?s=612x612&w=0&k=20&c=wkfgpWf3qBNeooebtU3Qurkyg6HnYFhaunffwbwAvOs=')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <div>
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-overlay">
-          <motion.h1
-            className="hero-title"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            Your Personal Movie Universe 🎬
-          </motion.h1>
-          <motion.p
-            className="hero-subtitle"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          >
-            Browse trending titles and get recommendations tailored to your taste.
-          </motion.p>
-
-          <div className="input-area">
-            <input
-              type="text"
-              placeholder="Enter movie name..."
-              value={movieName}
-              onChange={(e) => setMovieName(e.target.value)}
-              className="movie-input"
-            />
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleRecommendClick}
-              className="recommend-button"
-            >
-              Recommend
-            </motion.button>
-          </div>
-
-          {error && <p className="error-text">{error}</p>}
+      <div className="home-container">
+        {/* Search Bar Section */}
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Enter a movie name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+          <button onClick={fetchRecommendations} className="recommend-button">
+            Recommend
+          </button>
         </div>
-      </section>
+        {error && <p className="error-message">{error}</p>}
 
-      {/* Trending Now Section */}
-      <section className="slider-section trending">
-        <h2 className="section-title">Trending Now</h2>
-        <div className="movie-slider">
+        {/* Recommended Movies Section */}
+        {recommendations.length > 0 && (
+          <div>
+            <h2 className="home-heading">Recommended Movies</h2>
+            <div className="movie-list">
+              {recommendations.map((movie, index) => (
+                <div
+                  className="movie-card"
+                  key={index}
+                  onClick={() => handleMovieClick(movie)}
+                >
+                  <img
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    alt={movie.title}
+                  />
+                  <p className="movie-title">{movie.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Trending Movies Section */}
+        <h2 className="home-heading">Trending Movies</h2>
+        <div className="movie-list">
           {trendingMovies.length > 0 ? (
             trendingMovies.map((movie, index) => (
-              <motion.div
+              <div
                 className="movie-card"
                 key={index}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 200 }}
+                onClick={() => handleMovieClick(movie)}
               >
-                <Link to="/movie-details">
-                  <div className="movie-poster">
-                    {movie.poster_path ? (
-                      <img
-                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                        alt={movie.title}
-                        className="movie-img"
-                      />
-                    ) : (
-                      <img
-                        src="https://via.placeholder.com/200x300?text=No+Image"
-                        alt={movie.title}
-                        className="movie-img"
-                      />
-                    )}
-                  </div>
-                  <p className="movie-title">{movie.title}</p>
-                </Link>
-              </motion.div>
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  alt={movie.title}
+                />
+                <p className="movie-title">{movie.title}</p>
+              </div>
             ))
           ) : (
             <p>Loading trending movies...</p>
           )}
         </div>
-      </section>
 
-      {/* Recommendations Section */}
-      {recommendations.length > 0 && (
-        <section className="slider-section recommended">
-          <h2 className="section-title">Recommended For You</h2>
-          <div className="movie-slider">
-            {recommendations.map((movie, index) => (
-              <motion.div
+        {/* English Movies Section */}
+        <h2 className="home-heading">Popular English Movies</h2>
+        <div className="movie-list">
+          {englishMovies.length > 0 ? (
+            englishMovies.map((movie, index) => (
+              <div
                 className="movie-card"
                 key={index}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 200 }}
+                onClick={() => handleMovieClick(movie)}
               >
-                <div className="movie-poster">
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt={movie.title}
-                    className="movie-img"
-                  />
-                </div>
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  alt={movie.title}
+                />
                 <p className="movie-title">{movie.title}</p>
-              </motion.div>
-            ))}
+              </div>
+            ))
+          ) : (
+            <p>Loading English movies...</p>
+          )}
+        </div>
+      </div>
+
+      {/* Modal for Movie Details */}
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        contentLabel="Movie Details"
+        className="movie-modal"
+        overlayClassName="modal-overlay"
+      >
+        {movieDetails && (
+          <div>
+            <h2>{movieDetails.title}</h2>
+            <p><strong>Overview:</strong> {movieDetails.overview}</p>
+            <p><strong>Release Date:</strong> {movieDetails.release_date}</p>
+            <p><strong>Rating:</strong> {movieDetails.vote_average}</p>
+
+            <h3>Cast:</h3>
+            <ul>
+              {movieDetails.cast.map((actor) => (
+                <li key={actor.cast_id}>
+                  {actor.name} as {actor.character}
+                </li>
+              ))}
+            </ul>
+
+            <h3>Crew:</h3>
+            <ul>
+              {movieDetails.crew.map((member, i) => (
+                <li key={i}>
+                  {member.name} - {member.job}
+                </li>
+              ))}
+            </ul>
+
+            <button onClick={() => setIsModalOpen(false)} className="close-modal-button">
+              Close
+            </button>
           </div>
-        </section>
-      )}
+        )}
+      </Modal>
 
       <Footer />
     </div>
   );
-}
+};
 
 export default Home;

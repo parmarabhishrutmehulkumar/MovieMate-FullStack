@@ -1,104 +1,73 @@
-/* Global Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Roboto', sans-serif;
-}
-
-body {
-  background-color: #141414;
-  color: white;
-  font-size: 16px;
-}
-
-/* Navbar Styles */
-nav {
+.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
-  background-color: #141414;
+  background-color: #1e1e2f;
+  padding: 1rem 2rem;
+  color: white;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-.logo a {
-  color: rgb(255, 231, 231);
-  font-size: 32px;
+.navbar-logo a {
+  font-size: 1.5rem;
   font-weight: bold;
   text-decoration: none;
-  transition: color 0.3s ease;
+  color: #f8f8f8;
 }
 
-.logo a:hover {
-  color: #e50914; /* Netflix Red */
-}
-
-nav ul {
-  list-style: none;
+.navbar-links {
   display: flex;
-  gap: 20px;
+  list-style: none;
+  gap: 2rem;
 }
 
-nav ul li {
-  display: inline-block;
-}
-
-nav ul li a {
-  color: white;
+.navbar-links a {
   text-decoration: none;
-  font-size: 18px;
+  color: #f0f0f0;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
-nav ul li a:hover {
-  color: #e50914;
+.navbar-links a:hover {
+  color: #ff4b2b;
 }
 
-/* Mobile View Styles */
-@media screen and (max-width: 768px) {
-  nav {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
-  }
-
-  nav ul {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  nav ul li a {
-    font-size: 20px;
-  }
-
-  .logo a {
-    font-size: 28px;
-  }
-}
-
-/* Button Style (Optional for Call-to-action) */
-.btn {
-  padding: 10px 25px;
-  background-color: #e50914;
+.menu-icon {
+  display: none;
+  font-size: 1.8rem;
   color: white;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.btn:hover {
-  background-color: #f40612;
-}
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block;
+  }
 
-/* Add Gradient Background */
-nav {
-  background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.8) 100%);
+  .navbar-links {
+    display: none;
+  }
+
+  .navbar-links-mobile {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    background-color: #1e1e2f;
+    width: 100%;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    list-style: none;
+    gap: 1.5rem;
+    z-index: 999;
+  }
+
+  .navbar-links-mobile a {
+    color: white;
+    font-size: 1.2rem;
+  }
 }

@@ -5,7 +5,7 @@ const registerController = async (req, res) => {
   const { name, email, password } = req.body;
 
   console.log(name, email, password);
-                               5
+                               
   try {
     const UserExist = await userModel.findOne({ email: email });
     if (UserExist) {
