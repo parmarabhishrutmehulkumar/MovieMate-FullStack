@@ -2,3 +2,20 @@ MovieMate
 *.mp4
 *.pptx
 *.docx
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Large files
+*.mp4
+*.zip
+*.rar
+*.csv
+*.pkl
+
+# System files
+.DS_Store
+Thumbs.db
