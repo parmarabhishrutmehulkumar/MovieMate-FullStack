@@ -11,8 +11,8 @@ const Home = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [movieDetails, setMovieDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search input
-  const [error, setError] = useState(""); // State for error messages
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [error, setError] = useState(""); 
 
   const apiKey = "d147107f102b8d03e41507c2503fa69e";
 
@@ -28,23 +28,21 @@ const Home = () => {
     }
 
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(
-          searchQuery
-        )}`
-      );
-      const data = await response.json();
-
-      if (data.results && data.results.length > 0) {
-        setRecommendations(data.results.slice(0, 10)); // Show top 10 recommendations
+      const resp = await fetch("http://localhost:4000/api1/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ movieName: searchQuery }),
+      });
+      const data = await resp.json();
+      if (resp.ok) {
+        setRecommendations(data.recommendations || []);
         setError("");
       } else {
-        setError("No recommendations found for the entered movie.");
-        setRecommendations([]);
+        setError(data.error || "Failed to get recommendations");
       }
-    } catch (error) {
-      console.error("Error fetching recommendations:", error);
-      setError("Failed to fetch recommendations. Please try again.");
+    } catch (err) {
+      console.error(err);
+      setError("Network error. Make sure backend + ML services are running.");
     }
   };
 

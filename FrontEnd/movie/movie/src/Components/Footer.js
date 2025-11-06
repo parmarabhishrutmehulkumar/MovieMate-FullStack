@@ -5,6 +5,12 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/f
 import "./Footer.css";
 
 const Footer = () => {
+  // Replace these with your actual social media URLs
+  const facebookUrl = "YOUR_FACEBOOK_URL";
+  const twitterUrl = "YOUR_TWITTER_URL";
+  const instagramUrl = "YOUR_INSTAGRAM_URL";
+  const linkedinUrl = "YOUR_LINKEDIN_URL";
+
   return (
     <motion.footer
       className="footer"
@@ -31,10 +37,10 @@ const Footer = () => {
         <div className="footer-section socials">
           <h4>Connect</h4>
           <div className="social-icons">
-            <a href="#"><FaFacebookF /></a>
-            <a href="#"><FaTwitter /></a>
-            <a href="#"><FaInstagram /></a>
-            <a href="#"><FaLinkedinIn /></a>
+            <a href={facebookUrl} target="_blank" rel="noopener noreferrer"><FaFacebookF /></a>
+            <a href={twitterUrl} target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
+            <a href={instagramUrl} target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+            <a href={linkedinUrl} target="_blank" rel="noopener noreferrer"><FaLinkedinIn /></a>
           </div>
         </div>
       </div>

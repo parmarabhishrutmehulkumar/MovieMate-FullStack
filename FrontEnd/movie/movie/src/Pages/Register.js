@@ -55,7 +55,7 @@ const Register = () => {
         }
 
         try {
-            const response = await axios.post("http://localhost:3000/register", {
+            const response = await axios.post("https://moviemate-backend-sii2.onrender.com/register", {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,

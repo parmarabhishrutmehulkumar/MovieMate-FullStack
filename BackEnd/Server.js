@@ -16,7 +16,7 @@ connectToDb();
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3001",
+  origin: "http://localhost:3000",
   methods: "GET,POST,PUT,DELETE", 
   allowedHeaders: "Content-Type,Authorization", 
 };
@@ -35,6 +35,15 @@ app.use('/register', router);
 app.use('/login', router1);
 
 app.use('/api',router1)
+
+
+// ...existing route imports...
+import  recommendRoute from './Routes/recommendRoute.js';
+
+app.use("/api1/", recommendRoute);
+
+// ...existing code to use other routes, DB init, etc.
+
 
 
 import { spawn } from 'child_process';
@@ -87,7 +96,5 @@ app.post('/recommend', (req, res) => {
 });
 
 
-const port = 3000;
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
