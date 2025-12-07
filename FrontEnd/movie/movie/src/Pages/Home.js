@@ -2,48 +2,62 @@ import React, { useEffect, useState } from "react";
 import "./Home.css";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
-import Modal from "react-modal";
+import HeroSection from "../Components/HeroSection";
+import MovieRow from "../Components/MovieRow";
+import MovieModal from "../Components/MovieModal";
 
 const Home = () => {
-  const [recommendations, setRecommendations] = useState([]);
   const [trendingMovies, setTrendingMovies] = useState([]);
-  const [englishMovies, setEnglishMovies] = useState([]);
+  const [topRated, setTopRated] = useState([]);
+  const [actionMovies, setActionMovies] = useState([]);
+  const [comedyMovies, setComedyMovies] = useState([]);
+  const [horrorMovies, setHorrorMovies] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [movieDetails, setMovieDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); 
-  const [error, setError] = useState(""); 
+  const [searchResults, setSearchResults] = useState([]);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [continueWatching, setContinueWatching] = useState([]);
 
   const apiKey = "d147107f102b8d03e41507c2503fa69e";
 
   useEffect(() => {
     fetchTrendingMovies();
-    fetchEnglishMovies();
-  }, []);
+    fetchTopRated();
+    fetchByGenre(28, setActionMovies);
+    fetchByGenre(35, setComedyMovies);
+    fetchByGenre(27, setHorrorMovies);
+    loadRecentlyViewed();
+    loadContinueWatching();
 
-  const fetchRecommendations = async () => {
-    if (!searchQuery.trim()) {
-      setError("Please enter a movie name to get recommendations.");
-      return;
-    }
-
-    try {
-      const resp = await fetch("http://localhost:4000/api1/recommend", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ movieName: searchQuery }),
-      });
-      const data = await resp.json();
-      if (resp.ok) {
-        setRecommendations(data.recommendations || []);
-        setError("");
-      } else {
-        setError(data.error || "Failed to get recommendations");
+    // Keyboard shortcuts
+    const handleKeyPress = (e) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        setIsModalOpen(false);
       }
-    } catch (err) {
-      console.error(err);
-      setError("Network error. Make sure backend + ML services are running.");
-    }
+      if (e.key === '/' && !isModalOpen) {
+        e.preventDefault();
+        document.querySelector('.search-trigger')?.click();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isModalOpen]);
+
+  const loadRecentlyViewed = () => {
+    const history = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+    setRecentlyViewed(history.slice(0, 20));
+  };
+
+  const loadContinueWatching = () => {
+    const history = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+    const recent = history.filter(m => {
+      const watchedDate = new Date(m.watchedAt);
+      const daysSince = (Date.now() - watchedDate) / (1000 * 60 * 60 * 24);
+      return daysSince < 7;
+    });
+    setContinueWatching(recent.slice(0, 10));
   };
 
   const fetchTrendingMovies = async () => {
@@ -58,175 +72,124 @@ const Home = () => {
     }
   };
 
-  const fetchEnglishMovies = async () => {
+  const fetchTopRated = async () => {
     try {
       const response = await fetch(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&with_original_language=en`
+        `https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}`
       );
       const data = await response.json();
-      setEnglishMovies(data.results || []);
+      setTopRated(data.results || []);
     } catch (error) {
-      console.error("Error fetching English movies:", error);
+      console.error("Error fetching top rated:", error);
     }
   };
 
-  const handleMovieClick = async (movie) => {
+  const fetchByGenre = async (genreId, setter) => {
     try {
-      const movieId = movie.id;
-
-      const [detailsRes, creditsRes] = await Promise.all([
-        fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`),
-        fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}&language=en-US`),
-      ]);
-
-      const detailsData = await detailsRes.json();
-      const creditsData = await creditsRes.json();
-
-      setMovieDetails({
-        ...detailsData,
-        cast: creditsData.cast.slice(0, 5),
-        crew: creditsData.crew.filter(
-          (member) => member.job === "Director" || member.job === "Writer"
-        ),
-      });
-
-      setSelectedMovie(movie);
-      setIsModalOpen(true);
+      const response = await fetch(
+        `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genreId}`
+      );
+      const data = await response.json();
+      setter(data.results || []);
     } catch (error) {
-      console.error("Error fetching movie details:", error);
+      console.error(`Error fetching genre ${genreId}:`, error);
     }
   };
 
-  Modal.setAppElement("#root");
+  const handleSearch = async (query) => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(query)}`
+      );
+      const data = await response.json();
+      setSearchResults(data.results || []);
+    } catch (error) {
+      console.error("Error searching:", error);
+    }
+  };
+
+  const handleFilter = async (filters) => {
+    try {
+      let url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}`;
+      if (filters.genre) url += `&with_genres=${filters.genre}`;
+      if (filters.year) url += `&primary_release_year=${filters.year}`;
+      if (filters.rating) url += `&vote_average.gte=${filters.rating}`;
+
+      const response = await fetch(url);
+      const data = await response.json();
+      setSearchResults(data.results || []);
+    } catch (error) {
+      console.error("Error filtering:", error);
+    }
+  };
+
+  const handleRecommend = async (movieName) => {
+    try {
+      const resp = await fetch("http://localhost:4000/api1/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ movieName }),
+      });
+      const data = await resp.json();
+      if (resp.ok) {
+        setRecommendations(data.recommendations || []);
+      }
+    } catch (err) {
+      console.error("Recommendation error:", err);
+    }
+  };
+
+  const handleMovieClick = (movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+    loadRecentlyViewed();
+    loadContinueWatching();
+  };
 
   return (
-    <div>
-      <Navbar />
+    <div className="home-netflix">
+      <Navbar onSearch={handleSearch} onRecommend={handleRecommend} onFilter={handleFilter} />
+      
+      {trendingMovies.length > 0 && (
+        <HeroSection movies={trendingMovies.slice(0, 5)} onMovieClick={handleMovieClick} />
+      )}
 
-      <div className="home-container">
-        {/* Search Bar Section */}
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Enter a movie name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-          <button onClick={fetchRecommendations} className="recommend-button">
-            Recommend
-          </button>
-        </div>
-        {error && <p className="error-message">{error}</p>}
-
-        {/* Recommended Movies Section */}
-        {recommendations.length > 0 && (
-          <div>
-            <h2 className="home-heading">Recommended Movies</h2>
-            <div className="movie-list">
-              {recommendations.map((movie, index) => (
-                <div
-                  className="movie-card"
-                  key={index}
-                  onClick={() => handleMovieClick(movie)}
-                >
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt={movie.title}
-                  />
-                  <p className="movie-title">{movie.title}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+      <div className="home-content">
+        {continueWatching.length > 0 && (
+          <MovieRow title="Continue Watching" movies={continueWatching} onMovieClick={handleMovieClick} />
         )}
 
-        {/* Trending Movies Section */}
-        <h2 className="home-heading">Trending Movies</h2>
-        <div className="movie-list">
-          {trendingMovies.length > 0 ? (
-            trendingMovies.map((movie, index) => (
-              <div
-                className="movie-card"
-                key={index}
-                onClick={() => handleMovieClick(movie)}
-              >
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                />
-                <p className="movie-title">{movie.title}</p>
-              </div>
-            ))
-          ) : (
-            <p>Loading trending movies...</p>
-          )}
-        </div>
+        {searchResults.length > 0 && (
+          <MovieRow title="Search Results" movies={searchResults} onMovieClick={handleMovieClick} />
+        )}
 
-        {/* English Movies Section */}
-        <h2 className="home-heading">Popular English Movies</h2>
-        <div className="movie-list">
-          {englishMovies.length > 0 ? (
-            englishMovies.map((movie, index) => (
-              <div
-                className="movie-card"
-                key={index}
-                onClick={() => handleMovieClick(movie)}
-              >
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                />
-                <p className="movie-title">{movie.title}</p>
-              </div>
-            ))
-          ) : (
-            <p>Loading English movies...</p>
-          )}
-        </div>
+        {recommendations.length > 0 && (
+          <MovieRow title="Recommended For You" movies={recommendations} onMovieClick={handleMovieClick} />
+        )}
+
+        {recentlyViewed.length > 0 && (
+          <MovieRow title="Recently Viewed" movies={recentlyViewed} onMovieClick={handleMovieClick} />
+        )}
+
+        <MovieRow title="Trending Now" movies={trendingMovies} onMovieClick={handleMovieClick} />
+        <MovieRow title="Top Rated" movies={topRated} onMovieClick={handleMovieClick} />
+        <MovieRow title="Action Movies" movies={actionMovies} onMovieClick={handleMovieClick} />
+        <MovieRow title="Comedy Movies" movies={comedyMovies} onMovieClick={handleMovieClick} />
+        <MovieRow title="Horror Movies" movies={horrorMovies} onMovieClick={handleMovieClick} />
       </div>
 
-      {/* Modal for Movie Details */}
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        contentLabel="Movie Details"
-        className="movie-modal"
-        overlayClassName="modal-overlay"
-      >
-        {movieDetails && (
-          <div>
-            <h2>{movieDetails.title}</h2>
-            <p><strong>Overview:</strong> {movieDetails.overview}</p>
-            <p><strong>Release Date:</strong> {movieDetails.release_date}</p>
-            <p><strong>Rating:</strong> {movieDetails.vote_average}</p>
-
-            <h3>Cast:</h3>
-            <ul>
-              {movieDetails.cast.map((actor) => (
-                <li key={actor.cast_id}>
-                  {actor.name} as {actor.character}
-                </li>
-              ))}
-            </ul>
-
-            <h3>Crew:</h3>
-            <ul>
-              {movieDetails.crew.map((member, i) => (
-                <li key={i}>
-                  {member.name} - {member.job}
-                </li>
-              ))}
-            </ul>
-
-            <button onClick={() => setIsModalOpen(false)} className="close-modal-button">
-              Close
-            </button>
-          </div>
-        )}
-      </Modal>
-
       <Footer />
+
+      <MovieModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        movie={selectedMovie}
+        apiKey={apiKey}
+      />
+
+      <div className="keyboard-shortcuts-hint">
+        Press <kbd>/</kbd> to search • <kbd>Esc</kbd> to close
+      </div>
     </div>
   );
 };

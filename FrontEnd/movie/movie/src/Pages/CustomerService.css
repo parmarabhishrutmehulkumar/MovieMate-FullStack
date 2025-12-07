@@ -1,14 +1,21 @@
 .customer-service-page {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #fff;
   background-color: #141414;
-  padding: 20px;
-  line-height: 1.6;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+.service-content {
+  padding: 20px 4%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .service-hero {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
+  padding: 40px 0;
 }
 
 .service-hero h1 {
@@ -23,34 +30,67 @@
 }
 
 .service-section {
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 }
 
 .service-section h2 {
   font-size: 2rem;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   color: #e50914;
 }
 
 .faq {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.faq:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .faq h3 {
   font-size: 1.2rem;
   color: #fff;
+  margin-bottom: 10px;
 }
 
 .faq p {
   font-size: 1rem;
   color: #ccc;
+  line-height: 1.6;
+}
+
+.service-section p {
+  font-size: 1rem;
+  color: #ccc;
+  line-height: 1.8;
+  margin-bottom: 10px;
 }
 
 .service-section a {
   color: #e50914;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .service-section a:hover {
   text-decoration: underline;
+  color: #f40612;
+}
+
+@media (max-width: 768px) {
+  .service-hero h1 {
+    font-size: 2rem;
+  }
+
+  .service-hero p {
+    font-size: 1rem;
+  }
+
+  .service-section h2 {
+    font-size: 1.5rem;
+  }
 }

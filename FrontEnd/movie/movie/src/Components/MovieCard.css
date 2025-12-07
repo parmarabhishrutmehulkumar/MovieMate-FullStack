@@ -1,0 +1,164 @@
+.movie-card-netflix {
+  position: relative;
+  min-width: 320px;
+  height: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  backdrop-filter: blur(10px);
+}
+
+.trending-badge {
+  background: rgba(229, 9, 20, 0.9);
+  color: #fff;
+}
+
+.new-badge {
+  background: rgba(70, 211, 105, 0.9);
+  color: #fff;
+  top: 40px;
+}
+
+.card-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.movie-card-netflix:hover .card-poster {
+  transform: scale(1.1);
+}
+
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
+  padding: 15px;
+  color: #fff;
+}
+
+.card-info h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.action-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: rgba(42, 42, 42, 0.6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.action-btn:hover {
+  background: #fff;
+  color: #000;
+  transform: scale(1.15);
+}
+
+.action-btn.liked {
+  background: #e50914;
+  border-color: #e50914;
+  color: #fff;
+}
+
+.action-btn.liked:hover {
+  background: #f40612;
+  border-color: #f40612;
+}
+
+.action-btn.in-watchlist {
+  background: #46d369;
+  border-color: #46d369;
+  color: #fff;
+}
+
+.action-btn.in-watchlist:hover {
+  background: #5ae67e;
+  border-color: #5ae67e;
+}
+
+.play-btn {
+  background: #fff;
+  color: #000;
+}
+
+.play-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.info-btn {
+  margin-left: auto;
+}
+
+.card-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #46d369;
+  align-items: center;
+}
+
+.rating {
+  font-weight: 600;
+}
+
+.year {
+  color: #aaa;
+}
+
+.user-rating {
+  color: #ffd700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .movie-card-netflix {
+    min-width: 200px;
+    height: 110px;
+  }
+  
+  .card-info h3 {
+    font-size: 0.9rem;
+  }
+  
+  .action-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+}

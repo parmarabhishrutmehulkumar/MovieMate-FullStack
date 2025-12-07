@@ -1,37 +1,77 @@
-.navbar {
+.navbar-netflix {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1e1e2f;
-  padding: 1rem 2rem;
-  color: white;
-  position: sticky;
-  top: 0;
+  padding: 20px 4%;
   z-index: 1000;
+  transition: background-color 0.3s ease;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
 }
 
-.navbar-logo a {
-  font-size: 1.5rem;
-  font-weight: bold;
+.navbar-netflix.scrolled {
+  background-color: #141414;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.navbar-logo {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #e50914;
   text-decoration: none;
-  color: #f8f8f8;
+  letter-spacing: 2px;
 }
 
 .navbar-links {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-links a {
+  color: #e5e5e5;
   text-decoration: none;
-  color: #f0f0f0;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
 .navbar-links a:hover {
-  color: #ff4b2b;
+  color: #b3b3b3;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.navbar-icon {
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navbar-icon:hover {
+  color: #b3b3b3;
 }
 
 .menu-icon {
@@ -39,35 +79,40 @@
   font-size: 1.8rem;
   color: white;
   cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 8px;
 }
 
-/* Mobile responsive styles */
 @media (max-width: 768px) {
-  .menu-icon {
-    display: block;
-  }
-
   .navbar-links {
     display: none;
+  }
+
+  .menu-icon {
+    display: block;
   }
 
   .navbar-links-mobile {
     position: absolute;
     top: 70px;
+    left: 0;
     right: 0;
-    background-color: #1e1e2f;
-    width: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
     flex-direction: column;
     display: flex;
     align-items: center;
-    padding: 1rem 0;
+    padding: 20px 0;
     list-style: none;
-    gap: 1.5rem;
-    z-index: 999;
+    gap: 20px;
   }
 
   .navbar-links-mobile a {
     color: white;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+  }
+
+  .navbar-icon-btn {
+    display: none;
   }
 }

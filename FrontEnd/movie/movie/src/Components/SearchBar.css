@@ -1,0 +1,134 @@
+.search-bar-netflix {
+  position: relative;
+}
+
+.search-trigger {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-expanded {
+  position: relative;
+}
+
+.search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #fff;
+  border-radius: 4px;
+  padding: 8px 12px;
+  overflow: hidden;
+}
+
+.search-icon {
+  color: #fff;
+  margin-right: 10px;
+  font-size: 1.1rem;
+}
+
+.search-form input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.search-form input::placeholder {
+  color: #aaa;
+}
+
+.filter-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.filter-btn:hover {
+  color: #e50914;
+}
+
+.search-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.filters-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 5px;
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.filters-panel select {
+  flex: 1;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.filters-panel select:focus {
+  outline: none;
+  border-color: #e50914;
+}
+
+.filters-panel select option {
+  background: #000;
+  color: #fff;
+}
+
+.recommend-btn-small {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  margin-top: 60px;
+  background: #e50914;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.3s ease;
+}
+
+.recommend-btn-small:hover {
+  background: #f40612;
+}

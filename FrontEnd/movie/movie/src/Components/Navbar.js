@@ -1,62 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiBell } from "react-icons/fi";
+import SearchBar from "./SearchBar";
+import ProfileDropdown from "./ProfileDropdown";
 import "./Navbar.css";
 
-function Navbar() {
+function Navbar({ onSearch, onRecommend }) {
   const [isMobile, setIsMobile] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false); // Track authentication status
+  const [scrolled, setScrolled] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMobile(!isMobile);
-  };
-
-  const handleAuthAction = () => {
-    if (isSignedIn) {
-      // Perform logout logic here
-      setIsSignedIn(false);
-      alert("You have been logged out.");
-    } else {
-      // Redirect to login page
-      alert("Redirecting to login page...");
-    }
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <motion.nav
-      className="navbar"
-      initial={{ y: -50, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 80, damping: 14 }}
+      className={`navbar-netflix ${scrolled ? "scrolled" : ""}`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+      role="navigation"
+      aria-label="Main navigation"
     >
-      <motion.div className="navbar-logo" whileHover={{ scale: 1.1 }}>
-        <Link to="/home">🎬 MovieMate</Link>
-      </motion.div>
-
-      <div className="menu-icon" onClick={toggleMenu}>
-        {isMobile ? <FiX /> : <FiMenu />}
+      <div className="navbar-left">
+        <Link to="/home" className="navbar-logo" aria-label="MovieMate home">
+          MOVIEMATE
+        </Link>
+        <ul className={isMobile ? "navbar-links-mobile" : "navbar-links"} role="menubar">
+          <li role="none">
+            <Link to="/home" role="menuitem">Home</Link>
+          </li>
+          <li role="none">
+            <Link to="/about" role="menuitem">About</Link>
+          </li>
+          <li role="none">
+            <Link to="/service" role="menuitem">Help</Link>
+          </li>
+        </ul>
       </div>
 
-      <ul
-        className={isMobile ? "navbar-links-mobile" : "navbar-links"}
-        onClick={() => setIsMobile(false)}
-      >
-        <motion.li whileHover={{ scale: 1.1 }}>
-          <Link to="/home">🏠 Home</Link>
-        </motion.li>
-        <motion.li whileHover={{ scale: 1.1 }}>
-          <Link to="/about">📖 About Us</Link>
-        </motion.li>
-        <motion.li whileHover={{ scale: 1.1 }}>
-          <Link to="/service">🛠 Customer Service</Link>
-        </motion.li>
-        <motion.li whileHover={{ scale: 1.1 }}>
-          <button className="auth-button" onClick={handleAuthAction}>
-            {isSignedIn ? "🚪 Logout" : "🔑 Sign In"}
-          </button>
-        </motion.li>
-      </ul>
+      <div className="navbar-right">
+        <SearchBar onSearch={onSearch} onRecommend={onRecommend} />
+        <button 
+          className="navbar-icon-btn" 
+          aria-label="Notifications"
+        >
+          <FiBell className="navbar-icon" />
+        </button>
+        <ProfileDropdown />
+        <button 
+          className="menu-icon" 
+          onClick={() => setIsMobile(!isMobile)}
+          aria-label="Toggle mobile menu"
+          aria-expanded={isMobile}
+        >
+          {isMobile ? <FiX /> : <FiMenu />}
+        </button>
+      </div>
     </motion.nav>
   );
 }

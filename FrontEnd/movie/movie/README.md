@@ -1,70 +1,142 @@
-# Getting Started with Create React App
+# MovieMate - Netflix-Style Movie Recommendation System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A production-level movie recommendation web application with a sleek Netflix-inspired UI.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- 🎬 **Netflix-Style UI** - Modern, responsive design with smooth animations
+- 🔍 **Smart Search** - Search movies with expandable search bar
+- 🤖 **AI Recommendations** - ML-powered movie recommendations
+- 🎯 **Genre Categories** - Browse by Action, Comedy, Horror, and more
+- 📱 **Responsive Design** - Works seamlessly on all devices
+- ⚡ **Smooth Animations** - Framer Motion powered transitions
+- 🎥 **Movie Details** - Detailed modal with cast, crew, and ratings
+- 🔄 **Auto-Rotating Hero** - Featured movies carousel
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Frontend
+- React 18
+- Framer Motion (animations)
+- React Router DOM
+- Material-UI
+- React Icons
+- React Modal
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Backend
+- Node.js + Express
+- MongoDB (User management)
+- JWT Authentication
+- CORS enabled
 
-### `npm test`
+### ML Service
+- Python Flask
+- Scikit-learn
+- Pandas
+- TMDB API integration
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Installation
 
-### `npm run build`
+### Prerequisites
+- Node.js 16+
+- Python 3.8+
+- MongoDB
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Frontend Setup
+```bash
+cd "FrontEnd/movie/movie"
+npm install
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Backend Setup
+```bash
+cd BackEnd
+npm install
+npm run dev
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### ML Service Setup
+```bash
+cd ML
+pip install flask flask-cors pandas scikit-learn
+python App.py
+```
 
-### `npm run eject`
+## Environment Variables
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Backend (.env)
+```
+PORT=4000
+JWT_SECRET_KEY=your_secret_key
+MONGODB_URI=your_mongodb_uri
+TMDB_API_KEY=d147107f102b8d03e41507c2503fa69e
+ML_SERVICE_URL=http://localhost:5000
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## API Endpoints
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Backend
+- POST `/register` - User registration
+- POST `/login` - User login
+- POST `/api1/recommend` - Get movie recommendations
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### ML Service
+- POST `/recommend` - Get recommendations by movie name
+- POST `/predict` - Get predictions
 
-## Learn More
+## Features Breakdown
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Hero Section
+- Auto-rotating featured movies
+- Gradient overlays
+- Play and Info buttons
+- Mute/Unmute toggle
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Movie Rows
+- Horizontal scrolling
+- Hover effects with scale
+- Navigation arrows
+- Lazy loading
 
-### Code Splitting
+### Movie Cards
+- Netflix-style hover overlay
+- Action buttons (Play, Add, Like, Info)
+- Rating and year display
+- Smooth animations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Movie Modal
+- Full movie details
+- Cast and crew information
+- Trailer support (if available)
+- Responsive design
 
-### Analyzing the Bundle Size
+### Search Bar
+- Expandable animation
+- Real-time search
+- Recommendation trigger
+- Clean UI
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Performance Optimizations
 
-### Making a Progressive Web App
+- Lazy loading images
+- Skeleton loaders
+- Debounced search
+- Optimized re-renders
+- Code splitting ready
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Browser Support
 
-### Advanced Configuration
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## License
 
-### Deployment
+MIT
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Credits
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- TMDB API for movie data
+- Netflix for UI inspiration

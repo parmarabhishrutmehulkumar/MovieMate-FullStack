@@ -1,198 +1,179 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import axios from 'axios';
-import {
-    Container,
-    Typography,
-    TextField,
-    Button,
-    Alert,
-    Card,
-    CardContent,
-    Grid,
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-
-const StyledContainer = styled(Container)(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    backgroundImage: "url('https://media.istockphoto.com/id/181613506/photo/abstract-multimedia-background.jpg?s=612x612&w=0&k=20&c=DN5lgITX4wGrAINvEoboG-OZa7j-FZjXom1PEFzyEP8=')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    padding: theme.spacing(2),
-}));
-
-const StyledCard = styled(Card)(({ theme }) => ({
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2),
-    maxWidth: '500px',
-    width: '100%',
-}));
+import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import './Register.css';
 
 const Register = () => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-    });
-    const [error, setError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleRegister = async (event) => {
-        event.preventDefault();
-        setError(""); // Clear previous errors
+  const handleRegister = async (event) => {
+    event.preventDefault();
+    setError("");
 
-        if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match!");
-            return;
-        }
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
 
-        try {
-            const response = await axios.post("https://moviemate-backend-sii2.onrender.com/register", {
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
-            });
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
 
-            if (response.status === 201) {
-                setSuccessMessage("Successfully Registered!");
-                setTimeout(() => navigate("/login"), 1500); // Redirect after 1.5s
-            }
-        } catch (err) {
-            setError(
-                err.response?.data?.message || "Something went wrong. Please try again."
-            );
-        }
-    };
+    setLoading(true);
 
-    return (
-        <StyledContainer>
-            <StyledCard>
-                <CardContent>
-                    <Typography
-                        variant="h4"
-                        align="center"
-                        gutterBottom
-                        sx={{ color: '#aaa', fontWeight: 'bold' }}
-                    >
-                        Create Your Account
-                    </Typography>
+    try {
+      const response = await axios.post("http://localhost:4000/register", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
 
-                    {successMessage && (
-                        <Alert severity="success" sx={{ mb: 2 }}>
-                            {successMessage}
-                        </Alert>
-                    )}
-                    {error && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
-                            {error}
-                        </Alert>
-                    )}
+      if (response.status === 201) {
+        localStorage.setItem('user', JSON.stringify({ 
+          name: formData.name, 
+          email: formData.email 
+        }));
+        navigate("/login");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                    <form onSubmit={handleRegister}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Your Name"
-                                    variant="outlined"
-                                    value={formData.name}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, name: e.target.value })
-                                    }
-                                    sx={{
-                                        backgroundColor: "#121212",
-                                        color: "#f8f9fa",
-                                        input: { color: '#f8f9fa' },
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Your Email"
-                                    type="email"
-                                    variant="outlined"
-                                    value={formData.email}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, email: e.target.value })
-                                    }
-                                    sx={{
-                                        backgroundColor: "#121212",
-                                        color: "#f8f9fa",
-                                        input: { color: '#f8f9fa' },
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Password"
-                                    type="password"
-                                    variant="outlined"
-                                    value={formData.password}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, password: e.target.value })
-                                    }
-                                    sx={{
-                                        backgroundColor: "#121212",
-                                        color: "#f8f9fa",
-                                        input: { color: '#f8f9fa' },
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Confirm Password"
-                                    type="password"
-                                    variant="outlined"
-                                    value={formData.confirmPassword}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, confirmPassword: e.target.value })
-                                    }
-                                    sx={{
-                                        backgroundColor: "#121212",
-                                        color: "#f8f9fa",
-                                        input: { color: '#f8f9fa' },
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    fullWidth
-                                    sx={{
-                                        background: "linear-gradient(to right, #b31217, #e52d27)",
-                                        boxShadow: "0 4px 10px rgba(229, 45, 39, 0.6)",
-                                    }}
-                                >
-                                    Register
-                                </Button>
-                            </Grid>
-                        </Grid>
-                        <Typography
-                            align="center"
-                            sx={{ mt: 3, color: '#bbb' }}
-                        >
-                            Already have an account?{" "}
-                            <Link to="/login" style={{ color: "#f8d32d", textDecoration: "none" }}>
-                                Login here
-                            </Link>
-                        </Typography>
-                    </form>
-                </CardContent>
-            </StyledCard>
-        </StyledContainer>
-    );
+  return (
+    <div className="auth-page">
+      <div className="auth-overlay" />
+      
+      <Link to="/" className="auth-logo">
+        MOVIEMATE
+      </Link>
+
+      <motion.div
+        className="auth-container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="auth-card">
+          <h1>Sign Up</h1>
+          
+          <form onSubmit={handleRegister} className="auth-form">
+            {error && (
+              <motion.div 
+                className="auth-error"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                role="alert"
+              >
+                {error}
+              </motion.div>
+            )}
+
+            <div className="form-field">
+              <div className="input-wrapper">
+                <FiUser className="input-icon" />
+                <input
+                  type="text"
+                  placeholder="Full name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  aria-label="Full name"
+                />
+              </div>
+            </div>
+
+            <div className="form-field">
+              <div className="input-wrapper">
+                <FiMail className="input-icon" />
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                  aria-label="Email address"
+                />
+              </div>
+            </div>
+
+            <div className="form-field">
+              <div className="input-wrapper">
+                <FiLock className="input-icon" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                  aria-label="Password"
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+            </div>
+
+            <div className="form-field">
+              <div className="input-wrapper">
+                <FiLock className="input-icon" />
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  required
+                  aria-label="Confirm password"
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                >
+                  {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              className="auth-submit"
+              disabled={loading}
+            >
+              {loading ? 'Creating account...' : 'Sign Up'}
+            </button>
+
+            <div className="auth-footer">
+              <p>
+                Already have an account? <Link to="/login">Sign in now</Link>
+              </p>
+            </div>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
 };
 
 export default Register;
